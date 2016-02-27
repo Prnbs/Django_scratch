@@ -1,0 +1,27 @@
+<html>
+<head>
+    <title>Search</title>
+</head>
+<body>
+    {% if errors %}
+        <ul>
+            {% for error in errors %}
+                <li>{{ error }}</li>
+            {% endfor %}
+        </ul>
+    {% endif %}
+    <form action="" method="get">
+        <input type="text" name="link">
+        <input type="submit" value="Search">
+    </form>
+    {% if unique_tags %}
+        <ul>
+            {% for unique_tag in unique_tags %}
+                <ul>
+                    <li>{{ unique_tag }}</li>
+                </ul>
+            {% endfor %}
+        </ul>
+    {% endif %}
+</body>
+</html>
