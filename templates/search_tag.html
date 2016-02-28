@@ -1,28 +1,18 @@
-<html>
-<head>
-    <title>Search</title>
-</head>
-<body>
-    {% if errors %}
-        <ul>
-            {% for error in errors %}
-                <li>{{ error }}</li>
-            {% endfor %}
-        </ul>
-    {% endif %}
-    <form action="" method="get">
-        <input type="text" name="email">
-        <input type="text" name="tag">
-        <input type="submit" value="Search">
-    </form>
+{% extends 'base_header.html' %}
+{% load crispy_forms_tags %}
+
+{% block title %}
+Links for a tag
+{% endblock %}
+
+{% block content %}
     {% if tagged_url %}
         <ul>
             {% for url in tagged_url %}
                 <ul>
-                    <li>{{ url }}</li>
+                    <li><a href="{{ url }}">{{url}}</a></li>
                 </ul>
             {% endfor %}
         </ul>
     {% endif %}
-</body>
-</html>
+{% endblock %}

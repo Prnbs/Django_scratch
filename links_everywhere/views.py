@@ -6,7 +6,7 @@ from django.http import HttpResponseRedirect
 
 
 @login_required
-def get_my_saved_links(request):
+def get_my_url(request):
     username = request.user.username
     saved_links = {}
     users = User.objects.get(email=username)
@@ -24,11 +24,11 @@ def get_my_saved_links(request):
         my_urls_tagged['tags'] = this_urls_tags
         urls_and_tags.append(my_urls_tagged)
     saved_links['tags_and_urls'] = urls_and_tags
-    return render(request, 'search_form.html', {'saved_links': saved_links})
+    return render(request, 'users_links.html', {'saved_links': saved_links})
 
 
 @login_required
-def get_all_tags_for_url(request):
+def get_my_tags(request):
     '''
     Gets the tags associated with an url
     :param request:
@@ -57,33 +57,36 @@ def get_all_tags_for_url(request):
 
 
 @login_required
-def get_urls_for_tag(request):
-    errors = []
-    if 'email' in request.GET:
-        if 'tag' in request.GET:
-            mail_id = request.GET['email']
-            input_tag = request.GET['tag']
-            if not mail_id or not input_tag:
-                errors.append("Both fields are required")
-                return render(request, 'search_tag.html', {'errors':errors})
-            else:
-                user = User.objects.get(email=mail_id)
-                urls = user.url.all()
-                tagged_urls = set()
-                for url in urls:
-                    tags = url.tags.all()
-                    for tag in tags:
-                        if str(tag) == input_tag:
-                            tagged_urls.add(url)
-                return render(request, 'search_tag.html', {'tagged_url':tagged_urls})
-        else:
-            errors.append("Both fields are required")
-            return render(request, 'search_tag.html', {'errors':errors})
+def get_related_url(request, tags_input):
+    '''
+    For a given tag return all the User's links which match that tag
+    :param request:
+    :return:
+    '''
+    tags = str(tags_input)
+    if tags is not None:
+        mail_id = request.user.email
+        input_tag = tags
+        user = User.objects.get(email=mail_id)
+        urls = user.url.all()
+        tagged_urls = set()
+        for url in urls:
+            tags = url.tags.all()
+            for tag in tags:
+                if str(tag) == input_tag:
+                    tagged_urls.add(url)
+        return render(request, 'search_tag.html', {'tagged_url':tagged_urls})
     else:
         return render(request, 'search_tag.html')
 
 
+@login_required
 def save_url(request):
+    '''
+    Save the url and it's tags
+    :param request:
+    :return:
+    '''
     form = SaveLinkForm(request.POST)
     if form.is_valid():
         cd = form.cleaned_data

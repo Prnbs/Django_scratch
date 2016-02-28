@@ -1,6 +1,6 @@
 from django import forms
 from crispy_forms.helper import FormHelper
-from crispy_forms.layout import Submit
+from crispy_forms.layout import Submit, Button
 
 
 class AddLinkForm(forms.Form):
@@ -18,6 +18,7 @@ class SaveLinkForm(forms.Form):
     helper.form_action = '../../links/saveurl/'
     helper.form_method = 'POST'
     helper.add_input(Submit('Save link', 'Save link'))
+
 
 
 
