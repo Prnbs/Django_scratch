@@ -1,9 +1,9 @@
 from django.shortcuts import render
-from links_everywhere.models import User, URL
-from links_everywhere.forms import AddLinkForm
-from django import forms
-from django.contrib.auth.models import User as auth_user
+from links_everywhere.models import User, URL, Tags
+from links_everywhere.forms import AddLinkForm, SaveLinkForm
 from django.contrib.auth.decorators import login_required
+from django.http import HttpResponseRedirect
+
 
 @login_required
 def get_my_saved_links(request):
@@ -16,6 +16,7 @@ def get_my_saved_links(request):
     for url in urls:
         my_urls_tagged = {}
         my_urls_tagged['url'] = url.url
+        print(my_urls_tagged['url'])
         tags = url.tags.all()
         this_urls_tags = []
         for tag in tags:
@@ -28,6 +29,11 @@ def get_my_saved_links(request):
 
 @login_required
 def get_all_tags_for_url(request):
+    '''
+    Gets the tags associated with an url
+    :param request:
+    :return:
+    '''
     errors = []
     form = AddLinkForm(request.GET)
     if form.is_valid():
@@ -35,17 +41,19 @@ def get_all_tags_for_url(request):
         url = cd['link']
         if not url:
             errors.append('Enter an url')
-            return render(request, 'search_links.html', {'errors':errors})
+            return render(request, 'add_links.html', {'errors':errors})
         else:
             urls = URL.objects.filter(url=url)
             unique_tags = set()
             for url in urls:
                 tags = url.tags.all()
                 for tag in tags:
-                    unique_tags.add(tag)
-            return render(request, 'search_links.html', {'unique_tags':unique_tags})
+                    unique_tags.add(str(tag))
+            data = {'link': url, 'tags': ",".join(unique_tags) }
+            save_form = SaveLinkForm(initial=data)
+            return render(request, 'add_links.html', {'form':save_form})
     else:
-        return render(request, 'search_links.html')
+        return render(request, 'add_links.html')
 
 
 @login_required
@@ -73,6 +81,23 @@ def get_urls_for_tag(request):
             return render(request, 'search_tag.html', {'errors':errors})
     else:
         return render(request, 'search_tag.html')
+
+
+def save_url(request):
+    form = SaveLinkForm(request.POST)
+    if form.is_valid():
+        cd = form.cleaned_data
+        user = User.objects.get(email=request.user.username)
+        url = URL.objects.create(url=cd['link'])
+        tags_list = cd['tags'].split(',')
+        for tag in tags_list:
+            tag = Tags.objects.create(tags=tag)
+            url.tags.add(tag)
+        user.url.add(url)
+
+    return HttpResponseRedirect("/links/getmyurl/")
+
+
 
 
 

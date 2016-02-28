@@ -11,3 +11,13 @@ class AddLinkForm(forms.Form):
     helper.add_input(Submit('Add link', 'Add link'))
 
 
+class SaveLinkForm(forms.Form):
+    link = forms.CharField()
+    tags = forms.CharField(widget=forms.Textarea)
+    helper = FormHelper()
+    helper.form_action = '../../links/saveurl/'
+    helper.form_method = 'POST'
+    helper.add_input(Submit('Save link', 'Save link'))
+
+
+

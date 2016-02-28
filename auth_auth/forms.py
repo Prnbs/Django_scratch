@@ -12,3 +12,5 @@ class LoginForm(forms.Form):
     helper = FormHelper()
     helper.form_method = 'POST'
     helper.add_input(Submit('login', 'login'))
+
+

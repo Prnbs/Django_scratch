@@ -14,11 +14,12 @@ Including another URLconf
     2. Add a URL to urlpatterns:  url(r'^blog/', include(blog_urls))
 """
 from django.conf.urls import url
-from links_everywhere.views import get_my_saved_links, get_all_tags_for_url, get_urls_for_tag
+from links_everywhere.views import get_my_saved_links, get_all_tags_for_url, get_urls_for_tag, save_url
 
 urlpatterns = [
     url(r'^getmyurl/$', get_my_saved_links),
     url(r'^getmytags/$', get_all_tags_for_url),
-    url(r'^getrelatedurl/$', get_urls_for_tag)
+    url(r'^getrelatedurl/$', get_urls_for_tag),
+    url(r'^saveurl/$', save_url)
 
 ]

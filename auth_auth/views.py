@@ -3,9 +3,6 @@ from django.contrib import auth
 from django.http import HttpResponseRedirect
 from auth_auth.forms import LoginForm
 
-# Create your views here.
-
-
 
 def login_view(request):
     username = request.POST.get('email', '')
