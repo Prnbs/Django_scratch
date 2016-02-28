@@ -6,6 +6,7 @@ Aha
 {% endblock %}
 
 {% block content %}
+    {% crispy saved_links.add_link %}
     {% csrf_token %}
     {% if saved_links.tags_and_urls %}
         <ul>

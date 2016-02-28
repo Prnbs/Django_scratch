@@ -1,6 +1,6 @@
 from django.shortcuts import render
 from links_everywhere.models import User, URL
-from links_everywhere.forms import UserForm
+from links_everywhere.forms import AddLinkForm
 from django import forms
 from django.contrib.auth.models import User as auth_user
 from django.contrib.auth.decorators import login_required
@@ -12,6 +12,7 @@ def get_my_saved_links(request):
     users = User.objects.get(email=username)
     urls = users.url.all()
     urls_and_tags = []
+    saved_links['add_link'] = AddLinkForm()
     for url in urls:
         my_urls_tagged = {}
         my_urls_tagged['url'] = url.url
@@ -25,10 +26,13 @@ def get_my_saved_links(request):
     return render(request, 'search_form.html', {'saved_links': saved_links})
 
 
+@login_required
 def get_all_tags_for_url(request):
     errors = []
-    if 'link' in request.GET:
-        url = request.GET['link']
+    form = AddLinkForm(request.GET)
+    if form.is_valid():
+        cd = form.cleaned_data
+        url = cd['link']
         if not url:
             errors.append('Enter an url')
             return render(request, 'search_links.html', {'errors':errors})
@@ -44,6 +48,7 @@ def get_all_tags_for_url(request):
         return render(request, 'search_links.html')
 
 
+@login_required
 def get_urls_for_tag(request):
     errors = []
     if 'email' in request.GET:
