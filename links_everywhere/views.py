@@ -88,10 +88,19 @@ def save_url(request):
     if form.is_valid():
         cd = form.cleaned_data
         user = User.objects.get(email=request.user.username)
-        url = URL.objects.create(url=cd['link'])
-        tags_list = cd['tags'].split(',')
+        try:
+            # if this user already has this url then get it
+            url = user.url.get(url=cd['link'])
+        except:
+            url = URL.objects.create(url=cd['link'])
+        tags_list = cd['tags'].strip().split(',')
         for tag in tags_list:
-            tag = Tags.objects.create(tags=tag)
+            tag = tag.strip()
+            try:
+                # if the Tag table already has this tag then reuse it
+                tag = Tags.objects.get(tags=tag)
+            except:
+                tag = Tags.objects.create(tags=tag)
             url.tags.add(tag)
         user.url.add(url)
 
