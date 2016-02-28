@@ -7,33 +7,22 @@ from django.contrib.auth.decorators import login_required
 
 @login_required
 def get_my_saved_links(request):
-    errors = []
     username = request.user.username
     saved_links = {}
-    saved_links['form'] = UserForm()
-    if 'email' in request.GET:
-        mail_id = request.GET['email']
-        if not mail_id:
-            errors.append('Please enter a mail id')
-            saved_links['errors'] = errors
-            return render(request, 'search_form.html', {'saved_links': saved_links})
-        else:
-            users = User.objects.get(email=username)
-            urls = users.url.all()
-            urls_and_tags = []
-            for url in urls:
-                my_urls_tagged = {}
-                my_urls_tagged['url'] = url.url
-                tags = url.tags.all()
-                this_urls_tags = []
-                for tag in tags:
-                    this_urls_tags.append(tag)
-                my_urls_tagged['tags'] = this_urls_tags
-                urls_and_tags.append(my_urls_tagged)
-            saved_links['tags_and_urls'] = urls_and_tags
-            return render(request, 'search_form.html', {'saved_links': saved_links})
-    else:
-        return render(request, 'search_form.html', {'saved_links':saved_links})
+    users = User.objects.get(email=username)
+    urls = users.url.all()
+    urls_and_tags = []
+    for url in urls:
+        my_urls_tagged = {}
+        my_urls_tagged['url'] = url.url
+        tags = url.tags.all()
+        this_urls_tags = []
+        for tag in tags:
+            this_urls_tags.append(tag)
+        my_urls_tagged['tags'] = this_urls_tags
+        urls_and_tags.append(my_urls_tagged)
+    saved_links['tags_and_urls'] = urls_and_tags
+    return render(request, 'search_form.html', {'saved_links': saved_links})
 
 
 def get_all_tags_for_url(request):
