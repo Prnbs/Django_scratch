@@ -14,7 +14,7 @@ Aha
                 <a href="{{ tag_and_url.url }}">{{tag_and_url.url}}</a>
                 <ul>
                 {% for tags in tag_and_url.tags %}
-                    <li><a href="/links/getrelatedurl/{{ tags }}" class="btn btn-default">{{ tags }}</a></li>
+                    <a href="/links/getrelatedurl/{{ tags }}" class="btn btn-default">{{ tags }}</a>
                 {% endfor %}
                 </ul>
             {% endfor %}

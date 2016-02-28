@@ -36,12 +36,12 @@ def get_my_tags(request):
     '''
     errors = []
     form = AddLinkForm(request.GET)
+    empty_save_form = SaveLinkForm()
     if form.is_valid():
         cd = form.cleaned_data
         url = cd['link']
         if not url:
-            errors.append('Enter an url')
-            return render(request, 'add_links.html', {'errors':errors})
+            return render(request, 'add_links.html', {'form':empty_save_form})
         else:
             urls = URL.objects.filter(url=url)
             unique_tags = set()
@@ -53,7 +53,7 @@ def get_my_tags(request):
             save_form = SaveLinkForm(initial=data)
             return render(request, 'add_links.html', {'form':save_form})
     else:
-        return render(request, 'add_links.html')
+        return render(request, 'add_links.html', {'form':empty_save_form})
 
 
 @login_required
