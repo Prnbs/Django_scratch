@@ -1,9 +1,11 @@
+{% extends "base_header.html" %}
 {% load crispy_forms_tags %}
-<html>
-<head>
-    <title>Search</title>
-</head>
-<body>
+
+{% block title %}
+Aha
+{% endblock %}
+
+{% block content %}
     {% if saved_links.errors %}
         <ul>
             {% for error in saved_links.errors %}
@@ -27,5 +29,4 @@
             {% endfor %}
         </ul>
     {% endif %}
-</body>
-</html>
+{% endblock %}

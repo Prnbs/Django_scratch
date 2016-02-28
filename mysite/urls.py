@@ -16,8 +16,11 @@ Including another URLconf
 from django.conf.urls import include, url
 from django.contrib import admin
 import links_everywhere.urls
+import auth_auth.views
 
 urlpatterns = [
     url(r'^admin/', include(admin.site.urls)),
     url(r'^links/', include(links_everywhere.urls, namespace='links')),
+    url(r'^login/', auth_auth.views.login_view),
+    url(r'^logout/', auth_auth.views.logout_view),
 ]
