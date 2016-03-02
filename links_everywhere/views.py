@@ -3,6 +3,7 @@ from links_everywhere.models import User, URL, Tags
 from links_everywhere.forms import AddLinkForm, SaveLinkForm
 from django.contrib.auth.decorators import login_required
 from django.http import HttpResponseRedirect
+from links_everywhere.celerytasks import dummyadd
 
 
 @login_required
@@ -101,11 +102,13 @@ def save_url(request):
             tag = tag.strip()
             try:
                 # if the Tag table already has this tag then reuse it
-                tag = Tags.objects.get(tags=tag)
+                tag = Tags.objects.filter(tags=tag).first()
             except:
                 tag = Tags.objects.create(tags=tag)
             url.tags.add(tag)
         user.url.add(url)
+        print("Calling Celery")
+        dummyadd(cd['link'])
 
     return HttpResponseRedirect("/links/getmyurl/")
 
