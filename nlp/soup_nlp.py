@@ -4,11 +4,18 @@ from urllib.request import urlopen
 import nltk
 from nltk.corpus import stopwords
 import operator
-import sys
 
-def get_text_from_url(url):
+
+def get_text_and_img_from_url(url):
     page = urlopen(url).read().decode('utf8')
     soup = BeautifulSoup(page, 'lxml')
+    # TODO call these two in parallel
+    img = get_img_url(soup)
+    blurb = get_text(soup)
+    return blurb, img
+
+
+def get_text(soup):
     # get all the text in the p tags
     all_para = soup.find_all('p')
     all_text = []
@@ -24,11 +31,26 @@ def get_text_from_url(url):
     return ' '.join(all_text)
 
 
+def get_img_url(soup):
+    '''
+    Just gets the first image in the page
+    :param soup:
+    :return:
+    '''
+    first_image = soup.find_all('img')[0]
+    return first_image['src']
+
+
 def extract_text_from_tag(tag):
+    min_words = 5
     if type(tag) is NavigableString:
-        return str(tag)
+        str_between_tags = str(tag)
+        # return only if more than min_words
+        if len(str_between_tags.split()) > min_words:
+            return str(tag)
     elif type(tag.contents) is list:
-        if len(tag.contents) > 0:
+        # return only if more than min_words
+        if len(tag.contents) > min_words:
             try:
                 return " ".join(tag.contents)
             except:
@@ -69,7 +91,7 @@ def get_top_five(text_data):
 if __name__ == '__main__':
     # text_data = get_text_from_url('https://en.wikipedia.org/wiki/Dijkstra%27s_algorithm')
     # print(sys.argv[1])
-    text_data = get_text_from_url('http://ssarangi.github.io/Luajit-For-Python/')
-    print(text_data)
+    text_data = get_text_and_img_from_url('http://rhodesmill.org/brandon/')
+    # print(text_data)
     ngram = get_top_five(text_data)
     # print(text_data)

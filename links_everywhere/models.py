@@ -22,3 +22,12 @@ class User(models.Model):
 
     def __str__(self):
         return self.email
+
+
+class URLMetaData(models.Model):
+    url = models.TextField()
+    blurb = models.TextField()
+    img = models.TextField()
+
+    def __str__(self):
+        return self.url

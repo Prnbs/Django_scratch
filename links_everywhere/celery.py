@@ -3,6 +3,7 @@ from __future__ import absolute_import
 from celery import Celery
 
 app = Celery('links_everywhere',
+             backend='rpc://',
              broker='amqp://guest@localhost//',
              include=['links_everywhere.celerytasks'])
 

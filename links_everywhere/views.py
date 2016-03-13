@@ -1,5 +1,5 @@
 from django.shortcuts import render
-from links_everywhere.models import User, URL, Tags
+from links_everywhere.models import User, URL, Tags, URLMetaData
 from links_everywhere.forms import AddLinkForm, SaveLinkForm
 from django.contrib.auth.decorators import login_required
 from django.http import HttpResponseRedirect
@@ -108,9 +108,16 @@ def save_url(request):
             url.tags.add(tag)
         user.url.add(url)
         print("Calling Celery")
-        dummyadd(cd['link'])
+        blurb, img =  dummyadd(cd['link'])
+        save_url_metadata(url, blurb, img)
 
     return HttpResponseRedirect("/links/getmyurl/")
+
+
+def save_url_metadata(url, blurb, img):
+    # save only first 140 words
+    blurb_140 = blurb.split()[:140]
+    URLMetaData.objects.create(url=url, blurb=blurb_140, img=img)
 
 
 
