@@ -23,6 +23,17 @@ def get_my_url(request):
         for tag in tags:
             this_urls_tags.append(tag)
         my_urls_tagged['tags'] = this_urls_tags
+        # fetch url meta data
+        try:
+            url_meta = URLMetaData.objects.get(url=url.url)
+            my_urls_tagged['blurb'] = "".join(url_meta.blurb)
+            # check if image url is relative
+            if url_meta.img.startswith(".") is True:
+                my_urls_tagged['image_url'] = url.url + str(url_meta.img)
+            else:
+              my_urls_tagged['image_url'] = url_meta.img
+        except:
+            pass
         urls_and_tags.append(my_urls_tagged)
     saved_links['tags_and_urls'] = urls_and_tags
     return render(request, 'users_links.html', {'saved_links': saved_links})
@@ -107,17 +118,20 @@ def save_url(request):
                 tag = Tags.objects.create(tags=tag)
             url.tags.add(tag)
         user.url.add(url)
-        print("Calling Celery")
-        blurb, img =  dummyadd(cd['link'])
-        save_url_metadata(url, blurb, img)
+        try:
+            url_meta_Data = URLMetaData.objects.get(url=cd['link'])
+            print("Calling Celery")
+            blurb, img = dummyadd(cd['link'])
+            save_url_metadata(url, blurb, img)
+        except:
+            print("Url meta data not added")
 
     return HttpResponseRedirect("/links/getmyurl/")
 
 
 def save_url_metadata(url, blurb, img):
-    # save only first 140 words
-    blurb_140 = blurb.split()[:140]
-    URLMetaData.objects.create(url=url, blurb=blurb_140, img=img)
+    # save only first 200 characters
+    URLMetaData.objects.create(url=url, blurb=blurb[:200]+"...", img=img)
 
 
 

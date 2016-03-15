@@ -11,12 +11,20 @@ Aha
     {% if saved_links.tags_and_urls %}
         <ul>
             {% for tag_and_url in saved_links.tags_and_urls %}
-                <a href="{{ tag_and_url.url }}">{{tag_and_url.url}}</a>
+            <table style="width:100%">
+                <tr>
+                <td><img src="{{tag_and_url.image_url}}" height="60" width="60"/></td>
+                 <td padding:15px>{{tag_and_url.blurb}}</td>
+                </tr>
+            </table>
+
+            <a href="{{ tag_and_url.url }}">{{tag_and_url.url}}</a>
                 <ul>
                 {% for tags in tag_and_url.tags %}
                     <a href="/links/getrelatedurl/{{ tags }}" class="btn btn-default">{{ tags }}</a>
                 {% endfor %}
                 </ul>
+
             {% endfor %}
         </ul>
     {% endif %}
